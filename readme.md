@@ -1,10 +1,16 @@
-# Operator (Pattern)
+# Kubernetes Operators
 
-**A Kubernetes operator is a _control loop_: a program that keeps comparing what was asked for with what actually exists, and changes what exists until it matches.** The same pattern runs every operator in Kubernetes, built-in and custom, eg the built-in one that keeps the requested number of Pods running.
+A _Kubernetes Operator_ is a kind of _control loop_: a program that keeps comparing what was asked for with what actually exists, and changes what exists until it matches. The same pattern is followed by every operator in Kubernetes, both built-in and custom.
 
-> Kubernetes docs call the built-in ones _controllers_ and reserve _operator_ for custom ones; the mechanism is the same.
+> Kubernetes docs call the built-in ones _controllers_ and reserve _operator_ for custom ones; but the mechanism is the same.
 
-**This repository builds one small operator three times, from a single hand-written file to controller-runtime, the Go library operators are usually built on.** The mechanism can then be read as code:
+
+This repository builds a single illustrative operator in three ways: 
+- 1). One hand-written file
+- 2). Separate tested parts
+- 3). Using `controller-runtime`, the _**Go**_ library that most production operators are built with.
+
+The code then shows the mechanism at work:
 
 - **What Kubernetes stores, and what it leaves to the operator.** Kubernetes stores the request and the operator's report on it. Acting on the request is the operator's code alone.
 - **Who calls whom.** The operator makes every call: it asks the API server for the objects and their changes, and writes its report back. Its loop needs no callback from Kubernetes and no listening port ([Operator and API server](api_server/readme.md)).
@@ -62,14 +68,14 @@ A control loop in which
 
 **Three levels, in reading order.** Each level removes what the one before it lacks; [Minimal and library controllers](example/readme.md) explains what that is, and who supplies each part at each level.
 
-| level | what it is | code, how to run and test it |
-|---|---|---|
-| 1. Minimal | the whole loop in one Python file; everything is our code | [example/controller/python/](example/controller/python/readme.md) |
-| 2. Structured | the same loop as separate named parts with tests, in Python and Go; it also runs as a web service without Kubernetes | [control_loop/](control_loop/readme.md): the design, with diagrams. Code: [Python](control_loop/python/readme.md), [Go](control_loop/go/readme.md) |
-| 3. Library | the same loop on controller-runtime; only `Reconcile` and the wiring are our code | [example/controller/go/](example/controller/go/readme.md) |
+| level | what it is |
+|---|---|
+| 1). [Minimal](example/controller/python/readme.md) | the whole loop in one **_Python_** file; everything is our code |
+| 2).[Structured](control_loop/readme.md) | the same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it also runs as a web service without Kubernetes | 
+| 3). [Library](example/controller/go/readme.md) | the same loop on controller-runtime in **_Go_**; only `Reconcile` and the wiring are our code
 
 **Around the code:**
 
-- [api_server/](api_server/readme.md): the three kinds of call an operator makes to the API server ("LIST", "WATCH", status `PATCH`), on one page; further detail on separate, optional pages.
-- [manifests/](manifests/readme.md): the Widget resource type and a sample Widget, and how to run any of the operators against a cluster.
+- [api_server](api_server/readme.md): the three kinds of call an operator makes to the API server ("LIST", "WATCH", status `PATCH`), on one page; further detail on separate, optional pages.
+- [manifests](manifests/readme.md): the Widget resource type and a sample Widget, and how to run any of the operators against a cluster.
 - [CI workflow](.github/workflows/control-loop.yml): runs the tests of level 2 and compiles levels 1 and 3 on every push.

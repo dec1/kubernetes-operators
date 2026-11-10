@@ -2,7 +2,7 @@
 
 **An operator makes three kinds of call to the Kubernetes API server, and its control loop receives none: it lists the objects of its resource type, watches their changes, and writes each result to an object's status.**
 
-Read this page to follow the operator code at any of the [three levels](../readme.md#in-this-repository); the control loop itself is explained without it in [control_loop/](../control_loop/readme.md). The pages under [Details](#details) are optional: each answers one further question.
+Read this page to follow the operator code at any of the [three levels](../readme.md##in-this-repository); the control loop itself is explained without it in [control_loop/](../control_loop/readme.md). The pages under [Details](#details) are optional: each answers one further question.
 
 | call | HTTP request | what it returns or changes |
 |---|---|---|

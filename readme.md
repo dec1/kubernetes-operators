@@ -1,5 +1,7 @@
 # Kubernetes Operators
 
+[![CI Tests](https://github.com/dec1/kubernetes-operators/actions/workflows/control-loop.yml/badge.svg)](https://github.com/dec1/kubernetes-operators/actions/workflows/control-loop.yml)
+
 A _Kubernetes Operator_ is a kind of _control loop_: a program that keeps comparing what was asked for with what actually exists, and changes what exists until it matches. The same pattern is followed by every operator in Kubernetes, both built-in and custom.
 
 > Kubernetes docs call the built-in ones _controllers_ and reserve _operator_ for custom ones; but the mechanism is the same.

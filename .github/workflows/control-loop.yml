@@ -7,9 +7,8 @@ name: control-loop
 
 on:
   push:
-    paths: ['control_loop/**', 'example/controller/**', '.github/workflows/control-loop.yml']
   pull_request:
-    paths: ['control_loop/**', 'example/controller/**', '.github/workflows/control-loop.yml']
+  workflow_dispatch:
 
 # The jobs only read the repository.
 permissions:

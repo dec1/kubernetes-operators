@@ -41,7 +41,7 @@ A process that repeats forever:
 
 ```mermaid
 flowchart LR
-    loop["**Control loop**"]
+    loop["`**Control loop**`"]
     spec["`**Spec**
     _set by someone_`"]
     internal["`**Internal state**
@@ -59,10 +59,10 @@ Because it compares spec and internal state each time, it corrects a mismatch wh
 
 ## _Operator_
 A control loop in which
-- the **spec** is the `spec` of an _object_ of a _resource type_, stored in the Kubernetes API server and editable by others;
-- the **internal state** is the software and resources it runs: Pods, a database, cloud resources, or in the Widget example, a map in memory;
-- the **result** is written to that object's `status`;
-- step 3's changes are specific to that resource type, eg create or delete Pods (ReplicaSet), or fail over and back up (a database operator).
+- **Spec** is the `spec` of an _object_ of a _resource type_, stored in the Kubernetes API server and editable by others;
+- **Internal State** is the software and resources it runs: Pods, a database, cloud resources, or in the Widget example, a map in memory;
+- **Result** is written to that object's `status`;
+- step 3's changes are specific to that resource type, eg create or delete Pods (ReplicaSet), or fail over and back up (eg a database).
 
 ## Project Overview
 

@@ -1,0 +1,8 @@
+# A Widget object: the Client's spec. The operator writes status.
+apiVersion: example.com/v1
+kind: Widget
+metadata:
+  name: demo
+  namespace: default
+spec:
+  replicas: 3

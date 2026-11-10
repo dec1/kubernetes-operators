@@ -1,0 +1,43 @@
+# Based on GitHub's Go template:
+# https://github.com/github/gitignore/blob/main/Go.gitignore
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Binaries of this project ("go build ./cmd/<name>" writes ./<name>)
+/server
+/operator
+/bin/
+/dist/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Code coverage profiles and other test artifacts
+*.out
+coverage.*
+!coverage.go
+*.coverprofile
+profile.cov
+*.prof
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
+.env
+.env.*
+!.env.example
+
+# Editor/IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store

@@ -1,0 +1,4 @@
+# Created by uv, Python and pytest; never committed.
+.venv/
+__pycache__/
+.pytest_cache/

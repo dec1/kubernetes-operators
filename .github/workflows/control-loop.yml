@@ -1,0 +1,76 @@
+# Runs the control loop tests, Python and Go, and compiles the minimal and the
+# library controller: the same commands as in the readmes of control_loop/python,
+# control_loop/go, example/controller/python and example/controller/go.
+# GitHub runs workflows only from .github/workflows at the repository root,
+# so this becomes active once operator/ is its own repository.
+name: control-loop
+
+on:
+  push:
+    paths: ['control_loop/**', 'example/controller/**', '.github/workflows/control-loop.yml']
+  pull_request:
+    paths: ['control_loop/**', 'example/controller/**', '.github/workflows/control-loop.yml']
+
+# The jobs only read the repository.
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: control_loop/python
+    steps:
+      - uses: actions/checkout@v7
+      # Installs uv only. uv then installs the Python version named in
+      # .python-version and the packages listed in uv.lock.
+      # setup-uv publishes full version tags only: there is no @v10.
+      - uses: astral-sh/setup-uv@v10.3.2
+        with:
+          working-directory: control_loop/python
+      - run: uv sync --locked  # --locked: fail if uv.lock does not match pyproject.toml.
+      - run: uv run --locked pytest -v
+
+  go:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: control_loop/go
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: control_loop/go/go.mod
+          cache: false  # Standard library only: no downloaded modules to cache.
+      - run: test -z "$(gofmt -l .)"  # Fails if any file is not gofmt-formatted.
+      - run: go vet ./...
+      - run: go test -race ./...
+
+  # The minimal controller has no tests and nothing to install.
+  minimal-controller:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: example/controller/python
+    steps:
+      - uses: actions/checkout@v7
+      # Uses the python3 already on the runner. Fails on a syntax error.
+      - run: python3 -m py_compile controller.py
+
+  # The library controller has no tests.
+  library-controller:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: example/controller/go
+    steps:
+      - uses: actions/checkout@v7
+      # Caches the downloaded modules (controller-runtime and what it needs),
+      # keyed by go.sum, which records their exact versions.
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: example/controller/go/go.mod
+          cache-dependency-path: example/controller/go/go.sum
+      - run: test -z "$(gofmt -l .)"  # Fails if any file is not gofmt-formatted.
+      - run: go vet .  # Compiles the controller and reports suspicious code.

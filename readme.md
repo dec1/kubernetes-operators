@@ -8,9 +8,12 @@ A _Kubernetes Operator_ is a kind of _control loop_: a program that keeps compar
 
 
 This repository builds a single illustrative operator in three ways: 
-- 1). One hand-written file
-- 2). Separate tested parts
-- 3). Using `controller-runtime`, the _**Go**_ library that most production operators are built with.
+- One hand-written file
+- Separate tested parts
+- Using `controller-runtime`, the _**Go**_ library that most production operators are built with.
+  
+  ####
+  > **_Go_** is the de facto standard programming language for Kubernetes operators and much of the cloud itself, because Kubernetes and many other major cloud tools are written in it. Its strengths in concurrency, single static binaries, and small resource footprint make it especially well-suited to this work.
 
 The code then shows the mechanism at work:
 
@@ -21,48 +24,35 @@ The code then shows the mechanism at work:
 
 The concept comes first, on this page. [Project Overview](#project-overview) then lists the code in reading order.
 
-## Terms
-
-The three things every control loop deals with, each with a thermostat as example:
-
-- **_Spec_:** the conditions someone sets for the controlled thing. It usually covers only part of it; anything not specified is left to the loop.
-  *Thermostat: 20 °C.*
-- **_Internal state_:** the actual condition of the thing the loop controls and changes. It's usually much larger than the spec.
-  *Thermostat: the room's temperature, and whether the heater is on.*
-- **_Result_:** what the loop reports about the internal state, for others to read. It can be partial or out of date.
-  *Thermostat: the display, "19.5 °C, heating".*
 
 ## _Control Loop_
-A process that repeats forever:
-1. read the spec;
-2. measure the internal state;
-3. where the internal state doesn't meet the spec, change the internal state;
-4. publish a result (optional).
+A control loop is **a** process that repeats indefinitely to:
+- 1). read a **_Spec_** — the conditions someone sets for the controlled thing. It usually covers only part of it; anything not specified is left to the loop.
+- 2). measure an _**Internal State**_ — the actual condition of the thing the loop controls and changes. It's usually much larger than the spec.
+- 3). modify the **_Internal State_** where it doesn't meet the spec.
+- 4). publish a _**Result** (optional)_ — what the report says about the internal state, for others to read. It can be partial or out of date.
 
-```mermaid
-flowchart LR
-    loop["`**Control loop**`"]
-    spec["`**Spec**
-    _set by someone_`"]
-    internal["`**Internal state**
-    _the thing the loop controls_`"]
-    result["`**Result**
-    _for others to read_`"]
-    loop -->|"1. read"| spec
-    loop -->|"2. measure"| internal
-    loop -->|"3. change, where it does not meet the spec"| internal
-    loop -->|"4. publish"| result
-    loop -->|"repeat"| loop
-```
+![img](img/control_loop.svg)
 
-Because it compares spec and internal state each time, it corrects a mismatch whatever caused it: a changed spec, an outside disturbance, or an earlier failed action.
 
-## _Operator_
-A control loop in which
+Because it compares the spec and internal state each time, it corrects a mismatch independently of the cause: a changed spec, an outside disturbance, or an earlier failed action.
+
+#### Simple Example 
+
+A thermostat can be seen as a control loop with:
+
+- _Spec_ — temperature setting (20 °C).
+- _Internal state_ — the room's actual temperature, and whether the heater is on.
+- _Result_ — the display ("19.5 °C, heating").
+
+
+## _Kubernetes Operator_
+A Kubernetes Operator is a specific kind of control loop in which:
 - **Spec** is the `spec` of an _object_ of a _resource type_, stored in the Kubernetes API server and editable by others;
 - **Internal State** is the software and resources it runs: Pods, a database, cloud resources, or in the Widget example, a map in memory;
 - **Result** is written to that object's `status`;
-- step 3's changes are specific to that resource type, eg create or delete Pods (ReplicaSet), or fail over and back up (eg a database).
+
+Step 3's changes are specific to the resource type (e.g., create or delete Pods for a ReplicaSet, or fail over and back up for a database).
 
 ## Project Overview
 
@@ -70,11 +60,11 @@ A control loop in which
 
 **Three levels, in reading order.** Each level removes what the one before it lacks; [Minimal and library controllers](example/readme.md) explains what that is, and who supplies each part at each level.
 
-| level | what it is |
+| Level | What it is |
 |---|---|
-| 1). [Minimal](example/controller/python/readme.md) | the whole loop in one **_Python_** file; everything is our code |
-| 2).[Structured](control_loop/readme.md) | the same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it also runs as a web service without Kubernetes | 
-| 3). [Library](example/controller/go/readme.md) | the same loop on controller-runtime in **_Go_**; only `Reconcile` and the wiring are our code
+| [Minimal](example/controller/python/readme.md) | The whole loop in one **_Python_** file; everything is our code. |
+| [Structured](control_loop/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | 
+| [Library](example/controller/go/readme.md) | The same loop on controller-runtime in **_Go_**; only `Reconcile` and the wiring are our code. |
 
 **Around the code:**
 

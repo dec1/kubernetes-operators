@@ -106,8 +106,8 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 
 **The watch reports changes to Widget objects, not changes to the internal state.** In the Widget example only `reconcile()` changes the internal state, so nothing is missed. An operator whose internal state others can change needs a further trigger:
 
-- **for Kubernetes objects it created**, eg Pods: it watches those too, and a change there reconciles the owning object (controller-runtime: `Owns()`);
-- **for a system it cannot watch**, eg a cloud resource: `reconcile()` asks to run again after a delay (controller-runtime: `RequeueAfter`).
+- **for Kubernetes objects it created**, eg Pods: it watches those too, and a change there reconciles the owning object (_controller-runtime_: `Owns()`);
+- **for a system it cannot watch**, eg a cloud resource: `reconcile()` asks to run again after a delay (_controller-runtime_: `RequeueAfter`).
 
 ## Details
 

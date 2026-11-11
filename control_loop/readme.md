@@ -89,7 +89,7 @@ API, Store and Notifier are the three parts each variant fills differently: **gr
 | Notifier | adds a Widget's name to the Queue when its spec is written or deleted; in the web service, a callback (`Queue.add`) that the Store calls |
 | Core: Queue, Worker, `reconcile()`, Internal state | the inner control loop both variants share: decides and acts, one name at a time |
 
-**One Worker, one name at a time.** Each variant runs two threads, so that two things can wait at the same time: the API side waits for requests or changes, and the Worker waits for names in the Queue. There is a single Worker, not a pool, so `reconcile()` never runs twice at once and the Internal state needs no protection against that. Several Workers would be faster, but two of them could then handle the same name at once; a pool needs a Queue that hands out each name to only one Worker at a time, as controller-runtime's does. The threads share the Store and the Queue, which therefore lock.
+**One Worker, one name at a time.** Each variant runs two threads, so that two things can wait at the same time: the API side waits for requests or changes, and the Worker waits for names in the Queue. There is a single Worker, not a pool, so `reconcile()` never runs twice at once and the Internal state needs no protection against that. Several Workers would be faster, but two of them could then handle the same name at once; a pool needs a Queue that hands out each name to only one Worker at a time, as _controller-runtime_'s does. The threads share the Store and the Queue, which therefore lock.
 
 ### What is stored where
 
@@ -261,6 +261,6 @@ Both variants run the same Core. Each fills the three variant parts of [Actors a
 
 - [Python](python/readme.md): standard library only.
 - [Go](go/readme.md): standard library only; the same parts, names and tests.
-- [Minimal and library controllers](../example/readme.md): the same loop with less code of our own, as one hand-written file, or on controller-runtime.
+- [Minimal and library controllers](../example/readme.md): the same loop with less code of our own, as one hand-written file, or on _controller-runtime_.
 
 Each implementation has unit tests for each part, and a smoke test per variant that runs the whole process: the web service over HTTP, the operator against an in-memory stand-in for the API server. Neither needs a cluster. CI runs them on every push.

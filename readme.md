@@ -10,7 +10,7 @@ A _Kubernetes Operator_ is a kind of _control loop_: a program that keeps compar
 This repository builds a single illustrative operator in three ways: 
 - One hand-written file
 - Separate tested parts
-- Using `controller-runtime`, the _**Go**_ library that most production operators are built with.
+- Using `controller-runtime`, the _**Go**_ library that most production operators are built with. Despite its name it is a library, not a separate runtime: its code is compiled into the operator.
   
   ####
   > **_Go_** is the de facto standard programming language for Kubernetes operators and much of the cloud itself, because Kubernetes and many other major cloud tools are written in it. Its strengths in concurrency, single static binaries, and small resource footprint make it especially well-suited to this work. _(Alternative implementations in both Go and Python are presented in this project for comparative purposes)._
@@ -19,14 +19,14 @@ The code then shows the mechanism at work:
 
 - **What Kubernetes stores, and what it leaves to the operator.** Kubernetes stores the request and the operator's report on it. Acting on the request is the operator's code alone.
 - **Who calls whom.** The operator makes every call: it asks the API server for the objects and their changes, and writes its report back. Its loop needs no callback from Kubernetes and no listening port ([Operator and API server](api_server/readme.md)).
-- **What a library takes over.** From one version to the next, parts written by hand (the watch, the cache, the queue, the worker) are replaced by the library, until only the decision code is ours.
+- **What _controller-runtime_ takes over.** From one version to the next, parts written by hand (the watch, the cache, the queue, the worker) are replaced by _controller-runtime_, until only the decision code is ours.
 - **That the loop does not depend on Kubernetes.** The same core also runs as a plain web service, so it runs and is tested without a cluster.
 
 The concept comes first, on this page. [Project Overview](#project-overview) then lists the code in reading order.
 
 
 ## _Control Loop_
-A control loop is **a** process that repeats indefinitely to:
+A control loop is a process that repeats indefinitely to:
 - 1). read a **_Spec_** — the conditions someone sets for the controlled thing. It usually covers only part of it; anything not specified is left to the loop.
 - 2). measure an _**Internal State**_ — the actual condition of the thing the loop controls and changes. It's usually much larger than the spec.
 - 3). modify the **_Internal State_** where it doesn't meet the spec.
@@ -63,9 +63,9 @@ There are three [levels](example/readme.md), in reading order, and each level re
 
 | Level | What it is | Strengths and limits|
 |---|---|---|
-| [Minimal](example/controller/python/readme.md) | The whole loop in one **_Python_** file; everything is our code. | Readable from top to bottom in one sitting. While one Widget progresses. There are no tests. |
+| [Minimal](example/controller/python/readme.md) | The whole loop in one **_Python_** file; everything is our code. | Readable from top to bottom in one sitting. While one Widget progresses, all others wait; there are no tests. |
 | [Structured](control_loop/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | Robustness, which is what most of its extra code is for: a _queue_ and a _worker_, so the others no longer wait while one Widget progresses; after an error, only that Widget is retried; each part is tested separately. |
-| [Library](example/controller/go/readme.md) | The same loop on controller-runtime in **_Go_**; only `Reconcile`, the function that makes one pass of the loop for one Widget, and the few lines that register it with the library are our code. | The library supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand. |
+| [Library](example/controller/go/readme.md) | The same loop on _controller-runtime_ in **_Go_**; only `Reconcile`, the function that makes one pass of the loop for one Widget, and the few lines that register it with _controller-runtime_ are our code. | _controller-runtime_ supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand. |
 
 > _Why a Web Service variant?_
 > The _Structured_ level can run the same control loop as a plain web service, without Kubernetes. Like the minimal Widget and the Python alternatives, it is there to teach, not because an operator needs it: it is still a control loop, but not a Kubernetes operator, so comparing the two variants shows which parts belong to the pattern and which to Kubernetes.
@@ -76,5 +76,3 @@ There are three [levels](example/readme.md), in reading order, and each level re
 - [API Server](api_server/readme.md): the three kinds of call an operator makes to the API server ("LIST", "WATCH", status `PATCH`), on one page; further detail on separate, optional pages.
 - [Manifests](manifests/readme.md): the Widget resource type and a sample Widget, and how to run any of the operators against a cluster.
 - [CI Workflow](.github/workflows/control-loop.yml): runs the tests of level 2 and compiles levels 1 and 3 on every push.
-
-The library supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand.

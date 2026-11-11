@@ -10,7 +10,7 @@
    *Lacks:* a Queue and a Worker. `reconcile()` runs on the thread that reads the watch and pauses there after each change, so while one Widget progresses, no other change is read. No tests.
 2. **Structured**: [control_loop/](../control_loop/readme.md). Adds the Queue, the Worker and tests. The Watcher only updates the cache and adds names to the Queue; the Worker calls `reconcile()`. The pause between two passes for one Widget is a delayed Queue entry, so other Widgets are handled meanwhile.
    *Lacks:* what every operator needs and we would have to write again each time: retry delays that grow, several workers in parallel, leader election (several replicas of the operator, one active) and metrics.
-3. **Library**: [controller/go/controller.go](controller/go/controller.go). controller-runtime supplies the parts of level 2 and what level 2 lacks.
+3. **Library**: [controller/go/controller.go](controller/go/controller.go). _controller-runtime_ supplies the parts of level 2 and what level 2 lacks.
    *Lacks:* visibility. The mechanism is inside the library, which is why this level comes last: levels 1 and 2 show what the library does.
 
 ## Who supplies each part

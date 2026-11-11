@@ -1,11 +1,13 @@
-# Minimal and Library controllers
+# Levels
 
-**This directory holds the three levels; this page compares them part by part.** What each level is, and its strengths and limits, is in [Project Overview](../readme.md#project-overview).
+As previously  [introduced](../readme.md#project-overview), the example code is divided into 3 levels.
 
-- [**Minimal**](1_minimal/readme.md): the whole loop in one Python file.
-- [**Library**](3_library/readme.md): the same loop on _controller-runtime_.
 
-The level between them is [**Structured**](2_structured/readme.md). All three use the Widget replicas example, the terms spec, internal state and result, and the step numbers 1 to 4 of [Kubernetes Operators](../readme.md).
+- [**_Minimal_**](1_minimal/readme.md): the whole loop in one Python file.
+- [**_Structured_**](1_minimal/readme.md): The same loop but dividend into separate named parts with tests. It is implemented in both Python and Go alternatives, each of which can optionally run as a web service without Kubernetes (for comparison).
+- [**_Library_**](3_library/readme.md): the same loop on _controller-runtime_.
+
+All three use the Widget replicas example, the terms spec, internal state and result, and the step numbers 1 to 4 of [Kubernetes Operators](../readme.md).
 
 ## Who supplies each part
 

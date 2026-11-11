@@ -29,4 +29,3 @@ It has no tests; the tested version of this loop is [Structured in Python](../2_
 python3 -m py_compile controller.py    # Fails on a syntax error; does not run the controller.
 ```
 
-The check writes the compiled file to `__pycache__/`, which [.gitignore](.gitignore) keeps out of Git.

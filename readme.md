@@ -61,17 +61,20 @@ All example code is based on the same example, referred to as a _**Widget**_, an
 
 There are three [levels](example/readme.md), in reading order, and each level removes what the one before it lacks.
 
-| Level | What it is |
-|---|---|
-| [Minimal](example/controller/python/readme.md) | The whole loop in one **_Python_** file; everything is our code. |
-| [Structured](control_loop/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | 
-| [Library](example/controller/go/readme.md) | The same loop on controller-runtime in **_Go_**; only `Reconcile` and the wiring are our code. |
+| Level | What it is | Strengths and limits|
+|---|---|---|
+| [Minimal](example/controller/python/readme.md) | The whole loop in one **_Python_** file; everything is our code. | Readable from top to bottom in one sitting. While one Widget progresses. There are no tests. |
+| [Structured](control_loop/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | Robustness, which is what most of its extra code is for: a _queue_ and a _worker_, so the others no longer wait while one Widget progresses; after an error, only that Widget is retried; each part is tested separately. |
+| [Library](example/controller/go/readme.md) | The same loop on controller-runtime in **_Go_**; only `Reconcile`, the function that makes one pass of the loop for one Widget, and the few lines that register it with the library are our code. | The library supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand. |
 
 > _Why a Web Service variant?_
 > The _Structured_ level can run the same control loop as a plain web service, without Kubernetes. Like the minimal Widget and the Python alternatives, it is there to teach, not because an operator needs it: it is still a control loop, but not a Kubernetes operator, so comparing the two variants shows which parts belong to the pattern and which to Kubernetes.
 
-**Around the code:**
+###
+##### Supporting Material
 
 - [API Server](api_server/readme.md): the three kinds of call an operator makes to the API server ("LIST", "WATCH", status `PATCH`), on one page; further detail on separate, optional pages.
 - [Manifests](manifests/readme.md): the Widget resource type and a sample Widget, and how to run any of the operators against a cluster.
 - [CI Workflow](.github/workflows/control-loop.yml): runs the tests of level 2 and compiles levels 1 and 3 on every push.
+
+The library supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand.

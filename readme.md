@@ -67,8 +67,11 @@ There are three [levels](example/readme.md), in reading order, and each level re
 | [Structured](control_loop/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | 
 | [Library](example/controller/go/readme.md) | The same loop on controller-runtime in **_Go_**; only `Reconcile` and the wiring are our code. |
 
+> _Why a Web Service variant?_
+> The _Structured_ level can run the same control loop as a plain web service, without Kubernetes. Like the minimal Widget and the Python alternatives, it is there to teach, not because an operator needs it: it is still a control loop, but not a Kubernetes operator, so comparing the two variants shows which parts belong to the pattern and which to Kubernetes.
+
 **Around the code:**
 
-- [api_server](api_server/readme.md): the three kinds of call an operator makes to the API server ("LIST", "WATCH", status `PATCH`), on one page; further detail on separate, optional pages.
-- [manifests](manifests/readme.md): the Widget resource type and a sample Widget, and how to run any of the operators against a cluster.
-- [CI workflow](.github/workflows/control-loop.yml): runs the tests of level 2 and compiles levels 1 and 3 on every push.
+- [API Server](api_server/readme.md): the three kinds of call an operator makes to the API server ("LIST", "WATCH", status `PATCH`), on one page; further detail on separate, optional pages.
+- [Manifests](manifests/readme.md): the Widget resource type and a sample Widget, and how to run any of the operators against a cluster.
+- [CI Workflow](.github/workflows/control-loop.yml): runs the tests of level 2 and compiles levels 1 and 3 on every push.

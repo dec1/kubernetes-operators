@@ -4,9 +4,10 @@ A control loop keeps an internal state meeting a spec: it repeatedly compares th
  The terms spec, internal state and result are defined in [Operator (Pattern)](../readme.md#control-loop).
 
 The example runs as either of two variants with the same core: a **web service**, without Kubernetes, or a **Kubernetes operator**. 
-This page first describes what both have in common; [Two variants](#two-variants-web-service-or-kubernetes-operator) below then sshows what each one supplies.
+The web service is there for comparison: it is still a control loop, but not a Kubernetes operator (see also [_Why a web service variant?_](../readme.md#project-overview)). 
+This page first describes what both have in common; The [Two variants](#two-variants-web-service-or-kubernetes-operator) section below, then shows how they differ.
 
-## Example: Widget replicas
+### Example: Widget replicas
 
 | term | in this example |
 |---|---|
@@ -16,7 +17,7 @@ This page first describes what both have in common; [Two variants](#two-variants
 
 One action adds or removes **one** replica, so reaching the spec takes several passes, and the result shows the progress.
 
-## Actors and calls
+### Actors and calls
 
 ```mermaid
 flowchart LR
@@ -90,7 +91,7 @@ API, Store and Notifier are the three parts each variant fills differently: **gr
 
 **One Worker, one name at a time.** Each variant runs two threads, so that two things can wait at the same time: the API side waits for requests or changes, and the Worker waits for names in the Queue. There is a single Worker, not a pool, so `reconcile()` never runs twice at once and the Internal state needs no protection against that. Several Workers would be faster, but two of them could then handle the same name at once; a pool needs a Queue that hands out each name to only one Worker at a time, as controller-runtime's does. The threads share the Store and the Queue, which therefore lock.
 
-## What is stored where
+### What is stored where
 
 ```mermaid
 flowchart LR
@@ -118,7 +119,7 @@ flowchart LR
 
 A queued name means only "check this Widget". The Worker reads the current spec when it takes the name, so writing the spec twice before a check leads to one check of the latest spec. A name already in the Queue is not added again.
 
-## One spec change
+### One spec change
 
 ```mermaid
 sequenceDiagram
@@ -153,7 +154,7 @@ sequenceDiagram
 
 Writing the spec returns as soon as it is stored; the loop's work happens afterwards. The Client follows progress by reading the result.
 
-## How each situation is handled
+### How each situation is handled
 
 `reconcile(name)` makes the same comparison every time, so these cases need no separate code paths:
 

@@ -18,20 +18,8 @@ In the table, `...` stands for `/apis/example.com/v1/namespaces/default`: where 
 "LIST" and "WATCH" are the labels these pages and the code comments use for the two kinds of read; both are HTTP `GET` requests.
 
 
-> _Careful:_ The [_Structured_](../control_loop/readme.md) level of this [project](../readme.md#project-overview)  has two HTTP APIs with similar URLs:
-> - Web service variant
-> - Kubernetes Operator variant (which is the only one discussed on this page)
-> 
-> | | API of the Kubernetes API server | HTTP API of the web service |
-> |---|---|---|
-> | part of | Kubernetes | our code: the web service variant of [control_loop/](../control_loop/readme.md) |
-> | called by | the Client, eg `kubectl`, and the operator | the Client, eg `curl` |
-> | example URL | `/apis/example.com/v1/namespaces/default/widgets/demo` | `/widgets/demo` |
-> | exists in | the operator variant, at all three levels | the web service variant |
-> 
-> The two variants are opposites here. 
-> _The operator makes calls and receives none; the web service receives calls and makes none._ 
-> _The web service runs  without Kubernetes, so it never calls the API server._
+> _Careful:_ These are calls to the API of the Kubernetes API server. 
+(The web service variant of the [_Structured_](../control_loop/readme.md) level has an HTTP API of its own with similar URLs, eg `/widgets/demo`; that variant never calls the API server. The two APIs are compared in [Two variants](../control_loop/readme.md#two-variants-web-service-or-kubernetes-operator)).
 > 
 > Two things leave the three _operator_ calls _unchanged_:
 > 
@@ -110,7 +98,7 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 | need | supplied by | without it |
 |---|---|---|
 | the Widget resource type | [00-crd.yaml](../manifests/00-crd.yaml) | the API server rejects Widget objects and the operator's calls |
-| permission for the three calls | outside the cluster: your own `kubectl` permissions. In a Pod: [02-rbac.yaml](../manifests/02-rbac.yaml), explained in [access.md](access) | the API server refuses the calls with `403 Forbidden` |
+| permission for the three calls | outside the cluster: your own `kubectl` permissions. In a Pod: [02-rbac.yaml](../manifests/02-rbac.yaml), explained in [access.md](access.md) | the API server refuses the calls with `403 Forbidden` |
 
 [manifests](../manifests/readme.md) has the commands.
 

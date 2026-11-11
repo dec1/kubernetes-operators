@@ -1,8 +1,10 @@
 # Control loop
 
-**A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.** The terms spec, internal state and result are defined in [Operator (Pattern)](../readme.md#control-loop).
+A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.
+ The terms spec, internal state and result are defined in [Operator (Pattern)](../readme.md#control-loop).
 
-The example runs as either of two variants with the same core: a **web service**, without Kubernetes, or a **Kubernetes operator**. This page first describes what both have in common; [Two variants](#two-variants-web-service-or-kubernetes-operator) shows what each one supplies.
+The example runs as either of two variants with the same core: a **web service**, without Kubernetes, or a **Kubernetes operator**. 
+This page first describes what both have in common; [Two variants](#two-variants-web-service-or-kubernetes-operator) below then sshows what each one supplies.
 
 ## Example: Widget replicas
 
@@ -167,9 +169,9 @@ Calling `reconcile()` more often than needed is harmless: it changes nothing whe
 
 **No periodic recheck in this example.** Only `reconcile()` changes the internal state, so it cannot change unnoticed. A control loop whose internal state can also be changed by something else, eg a person or another system, also adds every name to the Queue periodically, so that such changes are found and corrected.
 
-## Two variants: web service or Kubernetes operator
+## Two variants: Web Service and Kubernetes Operator
 
-**Both variants run the same Core. Each fills the three variant parts of [Actors and calls](#actors-and-calls) (API, Store, Notifier); the diagrams below use the same names and colours.**
+Both variants run the same Core. Each fills the three variant parts of [Actors and calls](#actors-and-calls) (API, Store, Notifier); the diagrams below use the same names and colours.
 
 | part | web service | Kubernetes operator |
 |---|---|---|
@@ -177,66 +179,77 @@ Calling `reconcile()` more often than needed is harmless: it changes nothing whe
 | Store | Store (web service), in memory | etcd, as the `spec` and `status` of each Widget object. Store (operator) reads a local copy (cache) of these objects and writes `status` through the API server |
 | Notifier | the Store's notify callback (`Queue.add`), called after each spec write or delete | Watcher, on each change it receives from the API server |
 
-**Web service**: one process; the colours are those of [Actors and calls](#actors-and-calls).
+> _Careful: The two APIs are easy to confuse: both are HTTP, with URLs ending in `widgets/{name}`._
+> 
+> | | web service | Kubernetes operator |
+> |---|---|---|
+> | the API is part of | our code | Kubernetes |
+> | example URL | `/widgets/demo` | `/apis/example.com/v1/namespaces/default/widgets/demo` |
+> | the Client | eg `curl` | eg `kubectl` |
+> | our process | receives the Client's calls and makes none | makes calls to the API server and receives none: [Operator and API server](../api_server/readme.md) |
 
-```mermaid
-flowchart LR
-    client["Client"]
-    subgraph process["Web service"]
-        api_web["`**API**
-        _HTTP API_`"]
-        store_web["`**Store**
-        _in memory_`"]
-        notifier_web["`**Notifier**
-        _the Store's notify callback_`"]
-        core["`**Core**
-        _Queue, Worker, reconcile(), Internal state_`"]
-    end
-    client -->|"PUT, GET, DELETE /widgets/name"| api_web
-    api_web -->|"write spec, read spec and result"| store_web
-    store_web -->|"spec written or deleted"| notifier_web
-    notifier_web -->|"add name"| core
-    core -->|"1. read spec, 4. write result"| store_web
-    classDef web fill:#e6f4e6,stroke:#2e7d32,color:#1b3d1f
-    classDef core fill:#fdf0c4,stroke:#a07d00,color:#3d2f00
-    class api_web,store_web,notifier_web web
-    class core core
-```
+- #### 1) Web Service 
+    one process; the colours are those of [Actors and calls](#actors-and-calls).
 
-**Kubernetes operator**: the API and the Store's data (etcd) belong to the cluster; the operator process adds the Watcher as Notifier and its own Store, a cache.
+    ```mermaid
+    flowchart LR
+        client["Client"]
+        subgraph process["Web service"]
+            api_web["`**API**
+            _HTTP API_`"]
+            store_web["`**Store**
+            _in memory_`"]
+            notifier_web["`**Notifier**
+            _the Store's notify callback_`"]
+            core["`**Core**
+            _Queue, Worker, reconcile(), Internal state_`"]
+        end
+        client -->|"PUT, GET, DELETE /widgets/name"| api_web
+        api_web -->|"write spec, read spec and result"| store_web
+        store_web -->|"spec written or deleted"| notifier_web
+        notifier_web -->|"add name"| core
+        core -->|"1. read spec, 4. write result"| store_web
+        classDef web fill:#e6f4e6,stroke:#2e7d32,color:#1b3d1f
+        classDef core fill:#fdf0c4,stroke:#a07d00,color:#3d2f00
+        class api_web,store_web,notifier_web web
+        class core core
+    ```
 
-```mermaid
-flowchart LR
-    client["`Client
-    _eg kubectl_`"]
-    subgraph cluster["Kubernetes cluster"]
-        api_op["`**API**
-        _API server_`"]
-        etcd["`**Store**
-        _etcd_`"]
-    end
-    subgraph process["Operator"]
-        notifier_op["`**Notifier**
-        _Watcher_`"]
-        store_op["`**Store**
-        _cache of the objects in etcd_`"]
-        core["`**Core**
-        _Queue, Worker, reconcile(), Internal state_`"]
-    end
-    client -->|"apply, get, delete Widget objects"| api_op
-    api_op -->|"store objects"| etcd
-    notifier_op -->|"#quot;LIST#quot; and #quot;WATCH#quot; Widget objects"| api_op
-    notifier_op -->|"update cache"| store_op
-    notifier_op -->|"add name"| core
-    core -->|"1. read spec, 4. write result"| store_op
-    store_op -->|"PATCH status"| api_op
-    classDef operator fill:#e8f1ff,stroke:#245b8f,color:#102a43
-    classDef kubernetes fill:#e7e4fa,stroke:#4a3fa8,color:#1f1a4d
-    classDef core fill:#fdf0c4,stroke:#a07d00,color:#3d2f00
-    class api_op,etcd kubernetes
-    class notifier_op,store_op operator
-    class core core
-```
+- #### 2) Kubernetes Operator
+    The API and the Store's data (etcd) belong to the cluster; the operator process adds the Watcher as Notifier and its own Store, a cache.
+
+    ```mermaid
+    flowchart LR
+        client["`Client
+        _eg kubectl_`"]
+        subgraph cluster["Kubernetes cluster"]
+            api_op["`**API**
+            _API server_`"]
+            etcd["`**Store**
+            _etcd_`"]
+        end
+        subgraph process["Operator"]
+            notifier_op["`**Notifier**
+            _Watcher_`"]
+            store_op["`**Store**
+            _cache of the objects in etcd_`"]
+            core["`**Core**
+            _Queue, Worker, reconcile(), Internal state_`"]
+        end
+        client -->|"apply, get, delete Widget objects"| api_op
+        api_op -->|"store objects"| etcd
+        notifier_op -->|"#quot;LIST#quot; and #quot;WATCH#quot; Widget objects"| api_op
+        notifier_op -->|"update cache"| store_op
+        notifier_op -->|"add name"| core
+        core -->|"1. read spec, 4. write result"| store_op
+        store_op -->|"PATCH status"| api_op
+        classDef operator fill:#e8f1ff,stroke:#245b8f,color:#102a43
+        classDef kubernetes fill:#e7e4fa,stroke:#4a3fa8,color:#1f1a4d
+        classDef core fill:#fdf0c4,stroke:#a07d00,color:#3d2f00
+        class api_op,etcd kubernetes
+        class notifier_op,store_op operator
+        class core core
+    ```
 
 - **The boundary** is two methods: the Core only reads a Widget's spec and writes its result. Each variant's Store supplies exactly these two methods, so the Core does not depend on either variant.
 - **The result becomes the object's `status`** in the operator, readable with `kubectl get widget demo -o yaml`.

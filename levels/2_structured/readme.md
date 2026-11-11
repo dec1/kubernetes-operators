@@ -20,6 +20,8 @@ One action adds or removes **one** replica, so reaching the spec takes several p
 
 ### Actors and calls
 
+The parts of [Levels](../readme.md#which-parts-are-our-code), in more detail: the same Notifier, Store, Queue, Worker, `reconcile()` and Internal state, drawn for both variants at once. Added here: the Client and the API it calls. Not drawn here: the API client, which only the operator variant has (see [Variants](#variants)).
+
 ```mermaid
 flowchart LR
     client["Client"]

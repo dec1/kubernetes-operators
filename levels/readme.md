@@ -10,15 +10,60 @@ All three use the _Widget_ replicas example, the terms spec, internal state and 
 
 ## Which parts are our code
 
-An operator is made of the parts in the first column. `reconcile()` and the Internal state are our code at every level. For the other parts, the levels differ: they are our code, or they come from _controller-runtime_. The Structured column describes its Kubernetes operator variant.
+The Widget operator can be decomposed into five parts. The decomposition is the same at every level:
 
-| part of an operator | Minimal | Structured | Library |
+```mermaid
+flowchart LR
+    subgraph operator["Operator"]
+        notifier["`**Notifier**`"]
+        queue["`**Queue**
+        _names to check_`"]
+        worker["`**Worker**`"]
+        reconcile["`**reconcile()**`"]
+        internal["`**Internal state**`"]
+        store["`**Store**
+        _cache of Widget objects_`"]
+        client["`**API client**`"]
+    end
+    api["`**API server**
+    _Kubernetes_`"]
+    notifier -->|"add name"| queue
+    worker -->|"take name"| queue
+    worker -->|"call"| reconcile
+    reconcile -->|"2. measure, 3. change"| internal
+    reconcile -->|"1. read spec"| store
+    reconcile -->|"4. write result"| client
+    notifier -->|"update cache"| store
+    notifier -->|"#quot;LIST#quot;, #quot;WATCH#quot;"| client
+    client --> api
+    classDef ours fill:#fdf0c4,stroke:#a07d00,color:#3d2f00
+    classDef other fill:#f2f2f2,stroke:#666666,color:#222222
+    classDef kubernetes fill:#e7e4fa,stroke:#4a3fa8,color:#1f1a4d
+    class reconcile,internal ours
+    class notifier,queue,worker,store,client other
+    class api kubernetes
+```
+
+Arrows point from caller to callee; the numbers are the four steps of the [control loop](../readme.md#control-loop). **Amber** is our code at every level; **grey** is our code or _controller-runtime_, depending on the level; **indigo** is Kubernetes. Two levels deviate from the arrows: Minimal has no Queue and Worker, so its Notifier calls `reconcile()` itself; at Structured, step 4 goes through the Store. [Structured](2_structured/readme.md#actors-and-calls) draws the same parts in more detail.
+
+| part | what it does |
+|---|---|
+| API client | makes the calls to the API server |
+| Notifier | finds out which Widgets changed, by "LIST" and "WATCH" ([explained](../api_server/readme.md#list-then-watch)) |
+| Store | keeps a local copy (cache) of the Widget objects |
+| Queue and Worker | the Queue holds the names of the Widgets to check; the Worker takes one name at a time and calls `reconcile()` for it |
+| `reconcile()` and Internal state | `reconcile()` makes one pass of the loop for one Widget; the Internal state is what that pass changes |
+
+`reconcile()` and the Internal state are what make this an operator for Widgets, so they are our code at every level (at the Library level the function is named `Reconcile`).
+
+The other four parts are the same for any operator, whatever it controls. They can therefore be written by hand or taken from _controller-runtime_, and that is where the levels differ. The Structured column describes its Kubernetes operator variant.
+
+| part | Minimal | Structured | Library |
 |---|---|---|---|
-| API client: makes the calls to the API server | ours, a few lines | ours | _controller-runtime_ |
-| Notifier: finds out which Widgets changed, by "LIST" and "WATCH" ([explained](../api_server/readme.md#list-then-watch)) | ours, inline in `run()` | ours: the Watcher | _controller-runtime_, which calls this part the reflector |
-| Store: the cache of Widget objects | ours: a dictionary. `reconcile()` reads it and calls the API directly | ours: Store (operator). `reconcile()` reaches it only through the two `WidgetStore` methods, which is what allows the web service variant | _controller-runtime_, which calls this part the informer cache |
-| Queue and Worker: the Queue holds the names of the Widgets to check; the Worker calls `reconcile()` for one name at a time | none. `reconcile()` runs on the thread that reads the watch and pauses there after each change, so no other change is read meanwhile | ours: one Worker. The pause between two passes for one Widget is a delayed Queue entry, so other Widgets are handled meanwhile | _controller-runtime_, which calls the Queue the work queue: one worker by default, several possible |
-| `reconcile()` and Internal state: one pass of the loop for one Widget, and what that pass changes | ours | ours | ours; the function is named `Reconcile` |
+| API client | ours, a few lines | ours | _controller-runtime_ |
+| Notifier | ours, inline in `run()` | ours: the Watcher | _controller-runtime_, which calls this part the reflector |
+| Store | ours: a dictionary | ours: Store (operator), reached only through the two `WidgetStore` methods, which is what allows the web service variant | _controller-runtime_, which calls this part the informer cache |
+| Queue and Worker | none: each change is handled on the thread that reads the watch, which pauses there afterwards, so no other change is read meanwhile | ours: one Worker. The pause between two passes for one Widget is a delayed Queue entry, so other Widgets are handled meanwhile | _controller-runtime_, which calls the Queue the work queue: one worker by default, several possible |
 
 > _Why Library comes last in the reading order:_
 > Its mechanism is inside _controller-runtime_, not visible in our code. Minimal and Structured show what _controller-runtime_ does.

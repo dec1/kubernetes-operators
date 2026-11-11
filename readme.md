@@ -13,7 +13,7 @@ This repository builds a single illustrative operator in three ways:
 - Using `controller-runtime`, the _**Go**_ library that most production operators are built with.
   
   ####
-  > **_Go_** is the de facto standard programming language for Kubernetes operators and much of the cloud itself, because Kubernetes and many other major cloud tools are written in it. Its strengths in concurrency, single static binaries, and small resource footprint make it especially well-suited to this work.
+  > **_Go_** is the de facto standard programming language for Kubernetes operators and much of the cloud itself, because Kubernetes and many other major cloud tools are written in it. Its strengths in concurrency, single static binaries, and small resource footprint make it especially well-suited to this work. _(Alternative implementations in both Go and Python are presented in this project for comparative purposes)._
 
 The code then shows the mechanism at work:
 
@@ -32,6 +32,7 @@ A control loop is **a** process that repeats indefinitely to:
 - 3). modify the **_Internal State_** where it doesn't meet the spec.
 - 4). publish a _**Result** (optional)_ — what the report says about the internal state, for others to read. It can be partial or out of date.
 
+###
 ![img](img/control_loop.svg)
 
 
@@ -41,7 +42,7 @@ Because it compares the spec and internal state each time, it corrects a mismatc
 
 A thermostat can be seen as a control loop with:
 
-- _Spec_ — temperature setting (20 °C).
+- _Spec_ — temperature setting ("20 °C").
 - _Internal state_ — the room's actual temperature, and whether the heater is on.
 - _Result_ — the display ("19.5 °C, heating").
 
@@ -56,7 +57,7 @@ Step 3's changes are specific to the resource type (e.g., create or delete Pods 
 
 ## Project Overview
 
-**All code uses one example, the Widget.** Its spec is a number of replicas; its internal state is the number of replicas actually running, a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica, so the progress is visible.
+**All code uses one example, the Widget.** Its spec is a number of replicas; its internal state is a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica at a time, so the progress is visible.
 
 **Three levels, in reading order.** Each level removes what the one before it lacks; [Minimal and library controllers](example/readme.md) explains what that is, and who supplies each part at each level.
 

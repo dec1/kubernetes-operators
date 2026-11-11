@@ -1,6 +1,6 @@
 # Control loop
 
-**A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.** The terms spec, internal state and result are defined in [Operator (Pattern)](../readme.md#terms).
+**A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.** The terms spec, internal state and result are defined in [Operator (Pattern)](../readme.md#control-loop).
 
 The example runs as either of two variants with the same core: a **web service**, without Kubernetes, or a **Kubernetes operator**. This page first describes what both have in common; [Two variants](#two-variants-web-service-or-kubernetes-operator) shows what each one supplies.
 

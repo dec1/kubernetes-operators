@@ -57,9 +57,9 @@ Step 3's changes are specific to the resource type (e.g., create or delete Pods 
 
 ## Project Overview
 
-**All code uses one example, the Widget.** Its spec is a number of replicas; its internal state is a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica at a time, so the progress is visible.
+All example code is based on the same example, referred to as a _**Widget**_, and  deliberately kept as simple as possible to illustrate general usage rather than domain-specific details. Its spec is a number of replicas; its internal state is a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica at a time, so the progress is visible.
 
-**Three levels, in reading order.** Each level removes what the one before it lacks; [Minimal and library controllers](example/readme.md) explains what that is, and who supplies each part at each level.
+There are three [levels](example/readme.md), in reading order, and each level removes what the one before it lacks.
 
 | Level | What it is |
 |---|---|

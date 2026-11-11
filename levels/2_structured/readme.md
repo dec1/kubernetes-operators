@@ -1,4 +1,4 @@
-# Control loop
+# 2 Structured Control loop (Go and Python)
 
 A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.
 Each such pass is called a **reconcile**; in the code it is one call of the function `reconcile(name)`.
@@ -171,9 +171,10 @@ Calling `reconcile()` more often than needed is harmless: it changes nothing whe
 
 **No periodic recheck in this example.** Only `reconcile()` changes the internal state, so it cannot change unnoticed. A control loop whose internal state can also be changed by something else, eg a person or another system, also adds every name to the Queue periodically, so that such changes are found and corrected.
 
-## Two variants: Web Service and Kubernetes Operator
+## Variants
 
-Both variants run the same Core. Each fills the three variant parts of [Actors and calls](#actors-and-calls) (API, Store, Notifier); the diagrams below use the same names and colours.
+Two alterative variants (Web Service and Kubernetes Operator) implemented and run the same Core. 
+Each supplies one of the three parts in [Actors and calls](#actors-and-calls) (API, Store, Notifier); the diagrams below use the same names and colours.
 
 | part | web service | Kubernetes operator |
 |---|---|---|

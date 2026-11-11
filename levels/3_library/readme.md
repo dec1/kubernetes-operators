@@ -1,4 +1,4 @@
-# Library controller: Go
+# 3 Library controller (Go)
 
 [controller.go](controller.go) is the control loop for Widget replicas on controller-runtime, the Go library Kubernetes operators are usually built on. Our code is only `Reconcile` and the wiring. What the library supplies, compared with the other levels: [Minimal and library controllers](../readme.md).
 

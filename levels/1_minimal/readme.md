@@ -1,4 +1,4 @@
-# Minimal controller: Python
+# 1 Minimal controller (Python)
 
 [controller.py](controller.py) is the whole control loop for Widget replicas in one file. It uses only the Python standard library, so there is nothing to install. What it contains and leaves out, compared with the other levels: [Minimal and library controllers](../readme.md).
 

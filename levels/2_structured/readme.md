@@ -2,11 +2,11 @@
 
 A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.
 Each such pass is called a **reconcile**; in the code it is one call of the function `reconcile(name)`.
- The terms spec, internal state and result are defined in [Operator (Pattern)](../../readme.md#control-loop).
+ The terms spec, internal state and result are defined in [Kubernetes Operators](../../readme.md#control-loop).
 
 The example runs as either of two variants with the same core: a **web service**, without Kubernetes, or a **Kubernetes operator**. 
 The web service is there for comparison: it is still a control loop, but not a Kubernetes operator (see also [_Why a web service variant?_](../../readme.md#project-overview)). 
-This page first describes what both have in common; The [Two variants](#two-variants-web-service-and-kubernetes-operator) section below, then shows how they differ.
+This page first describes what both have in common; the [Variants](#variants) section below then shows how they differ.
 
 ### Example: Widget replicas
 
@@ -175,8 +175,8 @@ Calling `reconcile()` more often than needed is harmless: it changes nothing whe
 
 ## Variants
 
-Two alterative variants (Web Service and Kubernetes Operator) implemented and run the same Core. 
-Each supplies one of the three parts in [Actors and calls](#actors-and-calls) (API, Store, Notifier); the diagrams below use the same names and colours.
+Two alternative variants (Web Service and Kubernetes Operator) run the same Core. 
+Each supplies its own version of the three parts in [Actors and calls](#actors-and-calls) (API, Store, Notifier); the diagrams below use the same names and colours.
 
 | part | web service | Kubernetes operator |
 |---|---|---|
@@ -265,6 +265,6 @@ Each supplies one of the three parts in [Actors and calls](#actors-and-calls) (A
 
 - [Python](python/readme.md): standard library only.
 - [Go](go/readme.md): standard library only; the same parts, names and tests.
-- [Minimal and library controllers](../readme.md): the same loop with less code of our own, as one hand-written file, or on _controller-runtime_.
+- [Levels](../readme.md): the same loop at the other two levels, as one hand-written file (Minimal) or on _controller-runtime_ (Library).
 
 Each implementation has unit tests for each part, and a smoke test per variant that runs the whole process: the web service over HTTP, the operator against an in-memory stand-in for the API server. Neither needs a cluster. CI runs them on every push.

@@ -25,8 +25,14 @@ flowchart LR
         _cache of Widget objects_`"]
         client["`**API client**`"]
     end
-    api["`**API server**
-    _Kubernetes_`"]
+    api["`**API server**`"]
+    subgraph legend["Legend"]
+        direction LR
+        legend_ours["our code at every level"]
+        legend_other["our code or controller-runtime, depending on the level"]
+        legend_kubernetes["Kubernetes"]
+        legend_ours ~~~ legend_other ~~~ legend_kubernetes
+    end
     notifier -->|"add name"| queue
     worker -->|"take name"| queue
     worker -->|"call"| reconcile
@@ -39,24 +45,26 @@ flowchart LR
     classDef ours fill:#fdf0c4,stroke:#a07d00,color:#3d2f00
     classDef other fill:#f2f2f2,stroke:#666666,color:#222222
     classDef kubernetes fill:#e7e4fa,stroke:#4a3fa8,color:#1f1a4d
-    class reconcile,internal ours
-    class notifier,queue,worker,store,client other
-    class api kubernetes
+    class reconcile,internal,legend_ours ours
+    class notifier,queue,worker,store,client,legend_other other
+    class api,legend_kubernetes kubernetes
 ```
 
-Arrows point from caller to callee; the numbers are the four steps of the [control loop](../readme.md#control-loop). **Amber** is our code at every level; **grey** is our code or _controller-runtime_, depending on the level; **indigo** is Kubernetes. Two levels deviate from the arrows: Minimal has no Queue and Worker, so its Notifier calls `reconcile()` itself; at Structured, step 4 goes through the Store. [Structured](2_structured/readme.md#actors-and-calls) draws the same parts in more detail.
+Arrows point from caller to callee; the numbers are the four steps of the [control loop](../readme.md#control-loop). Two levels deviate from the arrows: Minimal has no Queue and Worker, so its Notifier calls `reconcile()` itself; at Structured, step 4 goes through the Store. [Structured](2_structured/readme.md#actors-and-calls) draws the same parts in more detail.
 
 | part | what it does |
 |---|---|
 | API client | makes the calls to the API server |
 | Notifier | finds out which Widgets changed, by "LIST" and "WATCH" ([explained](../api_server/readme.md#list-then-watch)) |
 | Store | keeps a local copy (cache) of the Widget objects |
-| Queue and Worker | the Queue holds the names of the Widgets to check; the Worker takes one name at a time and calls `reconcile()` for it |
-| `reconcile()` and Internal state | `reconcile()` makes one pass of the loop for one Widget; the Internal state is what that pass changes |
+| Queue | holds the names of the Widgets to check |
+| Worker | takes one name at a time from the Queue and calls `reconcile()` for it |
+| `reconcile()` | makes one pass of the loop for one Widget |
+| Internal state | what that pass measures and changes |
 
 `reconcile()` and the Internal state are what make this an operator for Widgets, so they are our code at every level (at the Library level the function is named `Reconcile`).
 
-The other four parts are the same for any operator, whatever it controls. They can therefore be written by hand or taken from _controller-runtime_, and that is where the levels differ. The Structured column describes its Kubernetes operator variant.
+The other five parts are the same for any operator, whatever it controls. They can therefore be written by hand or taken from _controller-runtime_, and that is where the levels differ. The Structured column describes its Kubernetes operator variant.
 
 | part | Minimal | Structured | Library |
 |---|---|---|---|

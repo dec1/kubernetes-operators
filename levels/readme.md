@@ -1,11 +1,11 @@
 # Minimal and Library controllers
 
-**This directory holds the first and the last of the three levels; this page compares all three part by part.** What each level is, and its strengths and limits, is in [Project Overview](../readme.md#project-overview).
+**This directory holds the three levels; this page compares them part by part.** What each level is, and its strengths and limits, is in [Project Overview](../readme.md#project-overview).
 
-- **Minimal**: [controller/python](controller/python/readme.md), the whole loop in one Python file.
-- **Library**: [controller/go](controller/go/readme.md), the same loop on _controller-runtime_.
+- [**Minimal**](1_minimal/readme.md): the whole loop in one Python file.
+- [**Library**](3_library/readme.md): the same loop on _controller-runtime_.
 
-The level between them, **Structured**, is in [control_loop](../control_loop/readme.md). All three use the Widget replicas example, the terms spec, internal state and result, and the step numbers 1 to 4 of [Kubernetes Operators](../readme.md).
+The level between them is [**Structured**](2_structured/readme.md). All three use the Widget replicas example, the terms spec, internal state and result, and the step numbers 1 to 4 of [Kubernetes Operators](../readme.md).
 
 ## Who supplies each part
 
@@ -26,4 +26,4 @@ The level between them, **Structured**, is in [control_loop](../control_loop/rea
 
 ## Run and test them
 
-Each level's own readme shows how: [Minimal](controller/python/readme.md), [Structured in Python](../control_loop/python/readme.md), [Structured in Go](../control_loop/go/readme.md), [Library](controller/go/readme.md).
+Each level's own readme shows how: [Minimal](1_minimal/readme.md), [Structured in Python](2_structured/python/readme.md), [Structured in Go](2_structured/go/readme.md), [Library](3_library/readme.md).

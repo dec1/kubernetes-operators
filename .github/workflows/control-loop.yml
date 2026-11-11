@@ -1,6 +1,6 @@
 # Runs the control loop tests, Python and Go, and compiles the minimal and the
-# library controller: the same commands as in the readmes of control_loop/python,
-# control_loop/go, example/controller/python and example/controller/go.
+# library controller: the same commands as in the readmes of Structured in
+# Python, Structured in Go, Minimal and Library.
 # GitHub runs workflows only from .github/workflows at the repository root,
 # so this becomes active once operator/ is its own repository.
 name: control-loop
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: control_loop/python
+        working-directory: levels/2_structured/python
     steps:
       - uses: actions/checkout@v7
       # Installs uv only. uv then installs the Python version named in
@@ -27,7 +27,7 @@ jobs:
       # setup-uv publishes full version tags only: there is no @v10.
       - uses: astral-sh/setup-uv@v10.3.2
         with:
-          working-directory: control_loop/python
+          working-directory: levels/2_structured/python
       - run: uv sync --locked  # --locked: fail if uv.lock does not match pyproject.toml.
       - run: uv run --locked pytest -v
 
@@ -35,12 +35,12 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: control_loop/go
+        working-directory: levels/2_structured/go
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
-          go-version-file: control_loop/go/go.mod
+          go-version-file: levels/2_structured/go/go.mod
           cache: false  # Standard library only: no downloaded modules to cache.
       - run: test -z "$(gofmt -l .)"  # Fails if any file is not gofmt-formatted.
       - run: go vet ./...
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: example/controller/python
+        working-directory: levels/1_minimal
     steps:
       - uses: actions/checkout@v7
       # Uses the python3 already on the runner. Fails on a syntax error.
@@ -62,14 +62,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: example/controller/go
+        working-directory: levels/3_library
     steps:
       - uses: actions/checkout@v7
       # Caches the downloaded modules (controller-runtime and what it needs),
       # keyed by go.sum, which records their exact versions.
       - uses: actions/setup-go@v7
         with:
-          go-version-file: example/controller/go/go.mod
-          cache-dependency-path: example/controller/go/go.sum
+          go-version-file: levels/3_library/go.mod
+          cache-dependency-path: levels/3_library/go.sum
       - run: test -z "$(gofmt -l .)"  # Fails if any file is not gofmt-formatted.
       - run: go vet .  # Compiles the controller and reports suspicious code.

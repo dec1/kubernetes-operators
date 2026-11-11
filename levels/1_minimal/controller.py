@@ -1,11 +1,11 @@
 """Minimal controller: the control loop in one file, Python standard library only.
 
-The same Widget replicas example as control_loop/, with the same terms:
+The same Widget replicas example as Structured, with the same terms:
 - spec: the client's request in a Widget object's spec, eg replicas: 3;
 - internal state: the running replicas per name, a dictionary in memory;
 - result: what the controller reports, written to the object's status.
 
-What it leaves out compared with control_loop/: no Queue and no Worker.
+What it leaves out compared with Structured: no Queue and no Worker.
 reconcile() runs inline, on the same thread that reads the watch, so a slow
 pass delays every other Widget. No WidgetStore boundary: reconcile() reads the
 cache and calls the API directly, so there is no web service variant. No tests.

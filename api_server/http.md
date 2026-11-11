@@ -38,4 +38,4 @@ The body then grows by one JSON line whenever an object changes; minutes can pas
 
 ## 410 Gone in two forms
 
-A position that has expired is reported either as the HTTP status `410` of the watch request, or as a line of type `ERROR` with `"code": 410` inside a response that was already open. [api_client.py](../control_loop/python/src/control_loop/kubernetes_operator/api_client.py) handles both the same way: list again.
+A position that has expired is reported either as the HTTP status `410` of the watch request, or as a line of type `ERROR` with `"code": 410` inside a response that was already open. [api_client.py](../levels/2_structured/python/src/control_loop/kubernetes_operator/api_client.py) handles both the same way: list again.

@@ -5,7 +5,7 @@ An operator makes _three_ kinds of call to the Kubernetes API server, and its co
 - watches their changes
 - writes each result to an object's status
 
-Read this page to follow the operator code at any of the [three levels](../readme.md#project-overview); the control loop itself is explained without it in [control_loop/](../control_loop/readme.md). The pages under [Details](#details) are optional: each answers one further question.
+Read this page to follow the operator code at any of the [three levels](../readme.md#project-overview); the control loop itself is explained without it in [Structured](../levels/2_structured/readme.md). The pages under [Details](#details) are optional: each answers one further question.
 
 In the table, `...` stands for `/apis/example.com/v1/namespaces/default`: where the API server serves the Widgets of the namespace `default`.
 
@@ -19,7 +19,7 @@ In the table, `...` stands for `/apis/example.com/v1/namespaces/default`: where 
 
 
 > _Careful:_ These are calls to the API of the Kubernetes API server. 
-(The web service variant of the [_Structured_](../control_loop/readme.md) level has an HTTP API of its own with similar URLs, eg `/widgets/demo`; that variant never calls the API server. The two APIs are compared in [Two variants](../control_loop/readme.md#two-variants-web-service-or-kubernetes-operator)).
+(The web service variant of the [_Structured_](../levels/2_structured/readme.md) level has an HTTP API of its own with similar URLs, eg `/widgets/demo`; that variant never calls the API server. The two APIs are compared in [Two variants](../levels/2_structured/readme.md#two-variants-web-service-and-kubernetes-operator)).
 > 
 > Two things leave the three _operator_ calls _unchanged_:
 > 
@@ -72,7 +72,7 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 
 1. **"LIST"** returns every Widget object and a position `R`. The operator replaces its cache with these objects. It then reconciles every listed name, and every name it knew before that is no longer listed: a Widget deleted while the operator was not watching.
 2. **"WATCH" from `R`** returns each later change as a notification: its type (`ADDED`, `MODIFIED`, `DELETED`) and the whole object as it is now, not a difference. The operator updates its cache and `R`, then reconciles that name.
-3. **The response ends** at a timeout the operator requested (30 s in the minimal controller, 300 s in control_loop/). The operator watches again from the latest `R`; no new list is needed.
+3. **The response ends** at a timeout the operator requested (30 s in the minimal controller, 300 s in Structured). The operator watches again from the latest `R`; no new list is needed.
 4. **`R` has expired** (`410 Gone`): the operator starts again at step 1.
 
 **Both reads are needed.** A watch reports only changes after `R`, so the list supplies the objects that already exist and reveals deletions missed meanwhile. Listing repeatedly, without a watch, would notice a change only at the next list.

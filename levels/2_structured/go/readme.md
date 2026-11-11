@@ -66,7 +66,7 @@ The first terminal logs each result, eg `demo: result {"replicas":1,"ready":fals
 
 ## Run the Kubernetes operator
 
-Not needed for the tests. It needs a cluster with the Widget CustomResourceDefinition (CRD) and the sample Widget from [manifests](../../manifests/readme.md) applied. With those, from this directory:
+Not needed for the tests. It needs a cluster with the Widget CustomResourceDefinition (CRD) and the sample Widget from [manifests](../../../manifests/readme.md) applied. With those, from this directory:
 
 ```bash
 kubectl proxy &    # Listens on 127.0.0.1:8001 and adds your kubeconfig credentials.
@@ -77,7 +77,7 @@ Run this way, outside the cluster, the operator acts with your own kubectl permi
 
 ## Test it
 
-From this directory; CI runs the same commands on every push ([workflow](../../.github/workflows/control-loop.yml)):
+From this directory; CI runs the same commands on every push ([workflow](../../../.github/workflows/control-loop.yml)):
 
 ```bash
 test -z "$(gofmt -l .)" # Fails if a file is not gofmt-formatted; `gofmt -l .` lists those files.

@@ -20,7 +20,7 @@ kubectl apply -f 01-widget-demo.yaml
 kubectl proxy &    # Listens on 127.0.0.1:8001 and adds your kubeconfig credentials.
 ```
 
-Then start an operator as its readme says ([Python](../control_loop/python/readme.md#run-the-kubernetes-operator), [Go](../control_loop/go/readme.md#run-the-kubernetes-operator)), and follow the result in a second terminal:
+Then start an operator as its readme says ([Python](../levels/2_structured/python/readme.md#run-the-kubernetes-operator), [Go](../levels/2_structured/go/readme.md#run-the-kubernetes-operator)), and follow the result in a second terminal:
 
 ```bash
 kubectl get widget demo --watch

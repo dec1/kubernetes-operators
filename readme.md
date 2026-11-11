@@ -59,13 +59,13 @@ Step 3's changes are specific to the resource type (e.g., create or delete Pods 
 
 All example code is based on the same example, referred to as a _**Widget**_, and  deliberately kept as simple as possible to illustrate general usage rather than domain-specific details. Its spec is a number of replicas; its internal state is a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica at a time, so the progress is visible.
 
-There are three [levels](example/readme.md), in reading order, and each level removes what the one before it lacks.
+There are three [levels](levels/readme.md), in reading order, and each level removes what the one before it lacks.
 
 | Level | What it is | Strengths and limits|
 |---|---|---|
-| [Minimal](example/controller/python/readme.md) | The whole loop in one **_Python_** file; everything is our code. | Readable from top to bottom in one sitting. While one Widget progresses, all others wait; there are no tests. |
-| [Structured](control_loop/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | Robustness, which is what most of its extra code is for: a _queue_ and a _worker_, so the others no longer wait while one Widget progresses; after an error, only that Widget is retried; each part is tested separately. |
-| [Library](example/controller/go/readme.md) | The same loop on _controller-runtime_ in **_Go_**; only `Reconcile`, the function that makes one pass of the loop for one Widget, and the few lines that register it with _controller-runtime_ are our code. | _controller-runtime_ supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand. |
+| [Minimal](levels/1_minimal/readme.md) | The whole loop in one **_Python_** file; everything is our code. | Readable from top to bottom in one sitting. While one Widget progresses, all others wait; there are no tests. |
+| [Structured](levels/2_structured/readme.md) | The same loop as separate named parts with tests, in both **_Python_** and **_Go_** alternatives; it can also optionally run as a web service without Kubernetes (for comparison). | Robustness, which is what most of its extra code is for: a _queue_ and a _worker_, so the others no longer wait while one Widget progresses; after an error, only that Widget is retried; each part is tested separately. |
+| [Library](levels/3_library/readme.md) | The same loop on _controller-runtime_ in **_Go_**; only `Reconcile`, the function that makes one pass of the loop for one Widget, and the few lines that register it with _controller-runtime_ are our code. | _controller-runtime_ supplies everything _Structured_ adds, and also what _Structured_ still lacks: several workers in parallel, retry delays that grow, leader election (several copies of the operator, one active) and metrics. None of it is written by hand. |
 
 > _Why a Web Service variant?_
 > The _Structured_ level can run the same control loop as a plain web service, without Kubernetes. Like the minimal Widget and the Python alternatives, it is there to teach, not because an operator needs it: it is still a control loop, but not a Kubernetes operator, so comparing the two variants shows which parts belong to the pattern and which to Kubernetes.

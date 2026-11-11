@@ -2,15 +2,15 @@
 // that Kubernetes operators are usually built on (kubebuilder generates
 // projects for it).
 //
-// The same Widget replicas example as control_loop/, with the same terms:
+// The same Widget replicas example as Structured, with the same terms:
 //   - spec: the client's request in a Widget object's spec, eg replicas: 3;
 //   - internal state: the running replicas per name, a map in memory;
 //   - result: what the controller reports, written to the object's status.
 //
 // Our code is only Reconcile and the wiring in run(). The library supplies the
-// rest of control_loop/'s operator: the API client, the cache kept current by
+// rest of Structured's operator: the API client, the cache kept current by
 // "LIST" and "WATCH" (the Watcher and Store), the work queue and the worker
-// (the Queue and Worker). It adds what control_loop/ leaves out: retries with
+// (the Queue and Worker). It adds what Structured leaves out: retries with
 // growing delays, several workers (MaxConcurrentReconciles, default 1), leader
 // election and metrics.
 //

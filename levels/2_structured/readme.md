@@ -2,11 +2,11 @@
 
 A control loop keeps an internal state meeting a spec: it repeatedly compares the two, changes the internal state where they differ, and publishes a result.
 Each such pass is called a **reconcile**; in the code it is one call of the function `reconcile(name)`.
- The terms spec, internal state and result are defined in [Operator (Pattern)](../readme.md#control-loop).
+ The terms spec, internal state and result are defined in [Operator (Pattern)](../../readme.md#control-loop).
 
 The example runs as either of two variants with the same core: a **web service**, without Kubernetes, or a **Kubernetes operator**. 
-The web service is there for comparison: it is still a control loop, but not a Kubernetes operator (see also [_Why a web service variant?_](../readme.md#project-overview)). 
-This page first describes what both have in common; The [Two variants](#two-variants-web-service-or-kubernetes-operator) section below, then shows how they differ.
+The web service is there for comparison: it is still a control loop, but not a Kubernetes operator (see also [_Why a web service variant?_](../../readme.md#project-overview)). 
+This page first describes what both have in common; The [Two variants](#two-variants-web-service-and-kubernetes-operator) section below, then shows how they differ.
 
 ### Example: Widget replicas
 
@@ -79,7 +79,7 @@ flowchart LR
     style core fill:#fff8e1,stroke:#a07d00,color:#3d2f00
 ```
 
-Arrows point from caller to callee. The numbers are the four steps of the [control loop](../readme.md): one call of `reconcile()` reads the spec (1) and the running replicas (2), adds or removes one replica (3) and writes the result (4). The Worker closes the loop (repeat): it adds the name to the Queue again, takes it later, and calls `reconcile()` again.
+Arrows point from caller to callee. The numbers are the four steps of the [control loop](../../readme.md): one call of `reconcile()` reads the spec (1) and the running replicas (2), adds or removes one replica (3) and writes the result (4). The Worker closes the loop (repeat): it adds the name to the Queue again, takes it later, and calls `reconcile()` again.
 
 API, Store and Notifier are the three parts each variant fills differently: **green** for the web service, **blue** for the operator (our code), **indigo** for Kubernetes itself. The **amber** Core is the same in both. Only `reconcile()` changes the internal state; the Client and the API only read and write specs and results.
 
@@ -188,7 +188,7 @@ Both variants run the same Core. Each fills the three variant parts of [Actors a
 > | the API is part of | our code | Kubernetes |
 > | example URL | `/widgets/demo` | `/apis/example.com/v1/namespaces/default/widgets/demo` |
 > | the Client | eg `curl` | eg `kubectl` |
-> | our process | receives the Client's calls and makes none | makes calls to the API server and receives none: [Operator and API server](../api_server/readme.md) |
+> | our process | receives the Client's calls and makes none | makes calls to the API server and receives none: [Operator and API server](../../api_server/readme.md) |
 
 - #### 1) Web Service 
     one process; the colours are those of [Actors and calls](#actors-and-calls).
@@ -255,13 +255,13 @@ Both variants run the same Core. Each fills the three variant parts of [Actors a
 
 - **The boundary** is two methods: the Core only reads a Widget's spec and writes its result. Each variant's Store supplies exactly these two methods, so the Core does not depend on either variant.
 - **The result becomes the object's `status`** in the operator, readable with `kubectl get widget demo -o yaml`.
-- **The Watcher** first lists all Widget objects ("LIST"), then receives each change as it happens ("WATCH"), and lists again if the API server no longer has the changes it missed (410 Gone). Every list queues each listed name and each name it no longer finds, so a deletion missed meanwhile still reaches `reconcile()`. These calls are explained in [Operator and API server](../api_server/readme.md).
+- **The Watcher** first lists all Widget objects ("LIST"), then receives each change as it happens ("WATCH"), and lists again if the API server no longer has the changes it missed (410 Gone). Every list queues each listed name and each name it no longer finds, so a deletion missed meanwhile still reaches `reconcile()`. These calls are explained in [Operator and API server](../../api_server/readme.md).
 - **Internal state is still in memory.** After an operator restart, replicas start again from 0; the specs, stored in Kubernetes, are not lost.
 
 ## Implementations and tests
 
 - [Python](python/readme.md): standard library only.
 - [Go](go/readme.md): standard library only; the same parts, names and tests.
-- [Minimal and library controllers](../example/readme.md): the same loop with less code of our own, as one hand-written file, or on _controller-runtime_.
+- [Minimal and library controllers](../readme.md): the same loop with less code of our own, as one hand-written file, or on _controller-runtime_.
 
 Each implementation has unit tests for each part, and a smoke test per variant that runs the whole process: the web service over HTTP, the operator against an in-memory stand-in for the API server. Neither needs a cluster. CI runs them on every push.

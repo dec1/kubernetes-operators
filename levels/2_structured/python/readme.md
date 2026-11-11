@@ -71,7 +71,7 @@ Lower the spec with another `PUT` and `replicas` falls the same way. `curl -X DE
 
 ## Run the Kubernetes operator
 
-Not needed for the tests. It needs a cluster with the Widget CustomResourceDefinition (CRD) and the sample Widget from [manifests](../../manifests/readme.md) applied. With those, from this directory:
+Not needed for the tests. It needs a cluster with the Widget CustomResourceDefinition (CRD) and the sample Widget from [manifests](../../../manifests/readme.md) applied. With those, from this directory:
 
 ```bash
 kubectl proxy &    # Listens on 127.0.0.1:8001 and adds your kubeconfig credentials.
@@ -88,7 +88,7 @@ From this directory:
 uv run pytest
 ```
 
-CI runs the same tests on every push ([workflow](../../.github/workflows/control-loop.yml)), as `uv run --locked pytest -v`: `--locked` fails if `uv.lock` no longer matches `pyproject.toml`, instead of updating it; `-v` lists each test.
+CI runs the same tests on every push ([workflow](../../../.github/workflows/control-loop.yml)), as `uv run --locked pytest -v`: `--locked` fails if `uv.lock` no longer matches `pyproject.toml`, instead of updating it; `-v` lists each test.
 
 | file in `tests/` | tests | how |
 |---|---|---|

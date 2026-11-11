@@ -16,7 +16,7 @@ The Role permits exactly the [three calls](readme.md) and nothing else: the oper
 
 1. **The Pod names its ServiceAccount** in `spec.serviceAccountName`.
 2. **Kubernetes gives the Pod what it needs to call:** the API server's address in the environment variables `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT`, and two files under `/var/run/secrets/kubernetes.io/serviceaccount/`: a token that identifies the ServiceAccount, and a certificate authority bundle to verify the API server's certificate.
-3. **The operator sends the token with each call.** The code reads the token file on every call, because Kubernetes replaces it regularly ([api_client.py](../control_loop/python/src/control_loop/kubernetes_operator/api_client.py)).
+3. **The operator sends the token with each call.** The code reads the token file on every call, because Kubernetes replaces it regularly ([api_client.py](../levels/2_structured/python/src/control_loop/kubernetes_operator/api_client.py)).
 4. **The API server identifies the caller from the token**, then checks whether role-based access control (RBAC) permits this call for that caller.
 
 These permissions apply to the operator only, not to the person who installs it or to the client who writes Widget specs.

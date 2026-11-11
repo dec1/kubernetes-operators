@@ -1,8 +1,13 @@
 # Operator and API server
 
-**An operator makes three kinds of call to the Kubernetes API server, and its control loop receives none: it lists the objects of its resource type, watches their changes, and writes each result to an object's status.**
+An operator makes _three_ kinds of call to the Kubernetes API server, and its control loop _receives none_: 
+- lists the objects of its resource type
+- watches their changes
+- writes each result to an object's status
 
-Read this page to follow the operator code at any of the [three levels](../readme.md##in-this-repository); the control loop itself is explained without it in [control_loop/](../control_loop/readme.md). The pages under [Details](#details) are optional: each answers one further question.
+Read this page to follow the operator code at any of the [three levels](../readme.md#project-overview); the control loop itself is explained without it in [control_loop/](../control_loop/readme.md). The pages under [Details](#details) are optional: each answers one further question.
+
+In the table, `...` stands for `/apis/example.com/v1/namespaces/default`: where the API server serves the Widgets of the namespace `default`.
 
 | call | HTTP request | what it returns or changes |
 |---|---|---|
@@ -11,6 +16,27 @@ Read this page to follow the operator code at any of the [three levels](../readm
 | status `PATCH` | `PATCH .../widgets/demo/status` | writes the result into the object's `status` |
 
 "LIST" and "WATCH" are the labels these pages and the code comments use for the two kinds of read; both are HTTP `GET` requests.
+
+
+> _Careful:_ The [_Structured_](../control_loop/readme.md) level of this [project](../readme.md#project-overview)  has two HTTP APIs with similar URLs:
+> - Web service variant
+> - Kubernetes Operator variant (which is the only one discussed on this page)
+> 
+> | | API of the Kubernetes API server | HTTP API of the web service |
+> |---|---|---|
+> | part of | Kubernetes | our code: the web service variant of [control_loop/](../control_loop/readme.md) |
+> | called by | the Client, eg `kubectl`, and the operator | the Client, eg `curl` |
+> | example URL | `/apis/example.com/v1/namespaces/default/widgets/demo` | `/widgets/demo` |
+> | exists in | the operator variant, at all three levels | the web service variant |
+> 
+> The two variants are opposites here. 
+> _The operator makes calls and receives none; the web service receives calls and makes none._ 
+> _The web service runs  without Kubernetes, so it never calls the API server._
+> 
+> Two things leave the three _operator_ calls _unchanged_:
+> 
+> - *Where* the operator runs. In a Pod of the cluster, started by a Deployment, or as a process outside the cluster: it makes the same three calls. Only how it proves its identity differs ([access.md](access.md)).
+> - *What* the operator controls. Its internal state can be other Kubernetes objects, eg Pods; something outside Kubernetes, eg a cloud database; or, as here, a counter in memory. The three calls concern only the Widget objects, which hold the spec and the result. An operator that controls other Kubernetes objects makes further calls to the API server for them; this example makes none.
 
 ## The API server does not call the operator
 

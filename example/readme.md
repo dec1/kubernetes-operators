@@ -1,6 +1,7 @@
 # Minimal and library controllers
 
-**The same control loop as [control_loop/](../control_loop/readme.md), at the two extremes of how much code is ours: everything by hand in one file, or almost everything from a library.** Both use the Widget replicas example, the terms spec, internal state and result, and the step numbers 1 to 4 of [Kubernetes Operators](../readme.md).
+The same control loop as [control_loop](../control_loop/readme.md), at the two extremes of how much code is ours: everything by hand in one file, or almost everything from a library.
+Both use the Widget replicas example, the terms spec, internal state and result, and the step numbers 1 to 4 of [Kubernetes Operators](../readme.md).
 
 ## Three levels, in reading order
 

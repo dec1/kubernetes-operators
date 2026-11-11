@@ -19,7 +19,7 @@ In the table, `...` stands for `/apis/example.com/v1/namespaces/default`: where 
 
 
 > _Careful:_ These are calls to the API of the Kubernetes API server. 
-(The web service variant of the [_Structured_](../levels/2_structured/readme.md) level has an HTTP API of its own with similar URLs, eg `/widgets/demo`; that variant never calls the API server. The two APIs are compared in [Two variants](../levels/2_structured/readme.md#two-variants-web-service-and-kubernetes-operator)).
+(The web service variant of the [_Structured_](../levels/2_structured/readme.md) level has an HTTP API of its own with similar URLs, eg `/widgets/demo`; that variant never calls the API server. The two APIs are compared in [Variants](../levels/2_structured/readme.md#two-variants-web-service-and-kubernetes-operator)).
 > 
 > Two things leave the three _operator_ calls _unchanged_:
 > 

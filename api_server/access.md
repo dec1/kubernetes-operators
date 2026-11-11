@@ -2,7 +2,7 @@
 
 **An operator running in a Pod calls the API server as a ServiceAccount, and may make exactly the calls a Role permits to that ServiceAccount.** Run outside the cluster, as in this repository's readmes, it uses your own `kubectl` permissions instead, and none of this is needed.
 
-[manifests/02-rbac.yaml](../manifests/02-rbac.yaml) supplies three objects, all named `widget-operator`, in the namespace `default`:
+[02-rbac.yaml](../manifests/02-rbac.yaml) supplies three objects, all named `widget-operator`, in the namespace `default`:
 
 | object | role |
 |---|---|

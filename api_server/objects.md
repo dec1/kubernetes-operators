@@ -3,8 +3,8 @@
 **A resource type describes a structure; an object is one instance of it with particular values.** This page covers the terms that [Operator and API server](readme.md) uses without explaining.
 
 - **Resource type**: the structure its objects follow, analogous to a class. Example: Widget.
-- **CustomResourceDefinition (CRD)**: the document that defines a custom resource type: its fields, their value types and rules. Example: [manifests/00-crd.yaml](../manifests/00-crd.yaml). A CRD is itself a stored object; its name `widgets.example.com` is distinct from the name of a Widget object.
-- **Object**: one instance. Example: the Widget `demo` in the namespace `default`, with `spec.replicas: 3`, from [manifests/01-widget-demo.yaml](../manifests/01-widget-demo.yaml).
+- **CustomResourceDefinition (CRD)**: the document that defines a custom resource type: its fields, their value types and rules. Example: [00-crd.yaml](../manifests/00-crd.yaml). A CRD is itself a stored object; its name `widgets.example.com` is distinct from the name of a Widget object.
+- **Object**: one instance. Example: the Widget `demo` in the namespace `default`, with `spec.replicas: 3`, from [01-widget-demo.yaml](../manifests/01-widget-demo.yaml).
 
 ## Who defines a field, and who sets its value
 

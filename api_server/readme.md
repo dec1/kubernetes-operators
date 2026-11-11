@@ -83,10 +83,10 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 
 | need | supplied by | without it |
 |---|---|---|
-| the Widget resource type | [manifests/00-crd.yaml](../manifests/00-crd.yaml) | the API server rejects Widget objects and the operator's calls |
-| permission for the three calls | outside the cluster: your own `kubectl` permissions. In a Pod: [manifests/02-rbac.yaml](../manifests/02-rbac.yaml), explained in [access.md](access.md) | the API server refuses the calls with `403 Forbidden` |
+| the Widget resource type | [00-crd.yaml](../manifests/00-crd.yaml) | the API server rejects Widget objects and the operator's calls |
+| permission for the three calls | outside the cluster: your own `kubectl` permissions. In a Pod: [02-rbac.yaml](../manifests/02-rbac.yaml), explained in [access.md](access) | the API server refuses the calls with `403 Forbidden` |
 
-[manifests/](../manifests/readme.md) has the commands.
+[manifests](../manifests/readme.md) has the commands.
 
 ## Changes a Widget watch does not report
 
@@ -99,9 +99,9 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 
 | page | question it answers |
 |---|---|
-| [http.md](http.md) | What do the three requests and the open watch response look like as HTTP? |
-| [objects.md](objects.md) | What are a resource type, a CRD and an object; who sets which field; what identifies an object? |
-| [access.md](access.md) | How is an operator in a Pod identified, and what is it permitted to do? |
-| [webhooks.md](webhooks.md) | When does the API server call operator code after all? Admission webhooks, which this example does not use. |
+| [http](http.md) | What do the three requests and the open watch response look like as HTTP? |
+| [objects](objects.md) | What are a resource type, a CRD and an object; who sets which field; what identifies an object? |
+| [access](access.md) | How is an operator in a Pod identified, and what is it permitted to do? |
+| [webhooks](webhooks.md) | When does the API server call operator code after all? Admission webhooks, which this example does not use. |
 
 Reference: [Kubernetes API concepts: watches, resourceVersion, bookmarks](https://kubernetes.io/docs/reference/using-api/api-concepts/).

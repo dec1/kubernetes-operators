@@ -30,7 +30,7 @@ A control loop is a process that repeats indefinitely to:
 - 1). read a **_Spec_** — the conditions someone sets for the controlled thing. It usually covers only part of it; anything not specified is left to the loop.
 - 2). measure an _**Internal State**_ — the actual condition of the thing the loop controls and changes. It's usually much larger than the spec.
 - 3). modify the **_Internal State_** where it doesn't meet the spec.
-- 4). publish a _**Result** (optional)_ — what the report says about the internal state, for others to read. It can be partial or out of date.
+- 4). publish a _**Result** (optional)_ — a report about the internal state, for others to read. It can be partial or out of date.
 
 ###
 ![img](img/control_loop.svg)
@@ -49,15 +49,15 @@ A thermostat can be seen as a control loop with:
 
 ## _Kubernetes Operator_
 A Kubernetes Operator is a specific kind of control loop in which:
-- **Spec** is the `spec` of an _object_ of a _resource type_, stored in the Kubernetes API server and editable by others;
-- **Internal State** is the software and resources it runs: Pods, a database, cloud resources, or in the Widget example, a map in memory;
-- **Result** is written to that object's `status`;
+- **Spec** is the `spec` of an _object_ of a _resource type_, stored in the Kubernetes API server and editable by others.
+- **Internal State** is the software and resources it runs: Pods, a database, cloud resources, or in the Widget example, a map in memory.
+- **Result** is written to that object's `status`.
 
 Step 3's changes are specific to the resource type (e.g., create or delete Pods for a ReplicaSet, or fail over and back up for a database).
 
 ## Project Overview
 
-All example code is based on the same example, referred to as a _**Widget**_, and  deliberately kept as simple as possible to illustrate general usage rather than domain-specific details. Its spec is a number of replicas; its internal state is a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica at a time, so the progress is visible.
+All code is based on the same example, referred to as a _**Widget**_, and  deliberately kept as simple as possible to illustrate general usage rather than domain-specific details. Its spec is a number of replicas; its internal state is a counter in memory; its result says how many are running and whether that meets the spec. One pass adds or removes one replica at a time, so the progress is visible.
 
 There are three [levels](levels/readme.md), in reading order, and each level adds something the one before it lacks.
 

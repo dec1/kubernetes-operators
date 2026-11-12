@@ -38,7 +38,27 @@ So nothing is registered and no port is opened for the loop:
 
 `kubectl apply` returns when the object is stored. The operator's work happens afterwards and separately.
 
-## List, then watch
+---
+#### List, then Watch
+
+- "LIST" answers _"what exists now?"_ 
+- "WATCH" answers _"what changed since?"_
+
+The operator needs both answers, in that order.
+
+- *Why "WATCH" alone is not enough.* 
+A watch starts from a position in the change history and reports only what changed after it. A Widget created before the operator started, and not changed since, would never be reported. The watch also needs that position to start from, and the list response is what supplies it.
+
+#####
+- *Why "LIST" alone is not enough.* 
+The operator would have to list again and again, and would notice each change only at the next list.
+
+So the operator lists once to learn everything that exists, then watches from exactly that point, and misses nothing in between.
+
+> Kubernetes can also send the existing objects as the first notifications of a watch (`sendInitialEvents`), which makes the separate list unnecessary. 
+This project uses the list followed by a watch, because both steps are then visible in the code.
+
+---
 
 ```mermaid
 sequenceDiagram
@@ -75,13 +95,12 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 3. **The response ends** at a timeout the operator requested (30 s in the minimal controller, 300 s in Structured). The operator watches again from the latest `R`; no new list is needed.
 4. **`R` has expired** (`410 Gone`): the operator starts again at step 1.
 
-**Both reads are needed.** A watch reports only changes after `R`, so the list supplies the objects that already exist and reveals deletions missed meanwhile. Listing repeatedly, without a watch, would notice a change only at the next list.
-
 `MODIFIED` covers a change to `spec`, `status` or metadata, so the operator's own status `PATCH` comes back as a notification too. Reconciling that name again is harmless: the comparison finds nothing to change.
 
-## The position: resourceVersion
+## resourceVersion
 
-**`resourceVersion` is a string the API server assigns to mark a position in the change history.** The list response carries one, and so does each watched object. The operator only stores the latest one seen and passes it to the next watch. It is neither the API version (`v1`) nor a revision of the spec.
+**`resourceVersion` is a string the API server assigns to mark a position in the change history.**
+ The list response carries one, and so does each watched object. The operator only stores the latest one seen and passes it to the next watch. It is neither the API version (`v1`) nor a revision of the spec.
 
 - **It expires.** The API server keeps the change history only briefly, 5 minutes by default. A watch from an older position fails with `410 Gone`, and only a new "LIST" recovers.
 - **Bookmarks keep it fresh.** With `allowWatchBookmarks=true`, the API server may send `BOOKMARK` notifications: a newer `resourceVersion` and no object change. A watch on which nothing changes then still ends with a recent position. The API server need not send them, so the operator still handles `410 Gone`.
@@ -104,7 +123,8 @@ Solid arrows are requests or local calls; dashed arrows are response data.
 
 ## Changes a Widget watch does not report
 
-**The watch reports changes to Widget objects, not changes to the internal state.** In the Widget example only `reconcile()` changes the internal state, so nothing is missed. An operator whose internal state others can change needs a further trigger:
+**The watch reports changes to Widget objects, not changes to the internal state.**
+ In the Widget example only `reconcile()` changes the internal state, so nothing is missed. An operator whose internal state others can change needs a further trigger:
 
 - **for Kubernetes objects it created**, eg Pods: it watches those too, and a change there reconciles the owning object (_controller-runtime_: `Owns()`);
 - **for a system it cannot watch**, eg a cloud resource: `reconcile()` asks to run again after a delay (_controller-runtime_: `RequeueAfter`).
